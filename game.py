@@ -7,35 +7,64 @@ class PrisonersDilemma:
         self.p2_score = 0
         self.winner = None
 
+        self.p1_previous_moves = []
+        self.p2_previous_moves = []
+
         self.both_split_points = both_split_points
         self.both_steal_points = both_steal_points
         self.one_split_points = one_split_points
         self.one_steal_points = one_steal_points
 
-    def determine_winner(self):
-        if self.p1_score == self.p2_score:
-            return -1
+    def end(self):
+        if self.current_round < self.total_rounds:
+            return 0
+        elif self.p1_score == self.p2_score:
+            self.winner = -1
         elif self.p1_score > self.p2_score:
-            return 1
+            self.winner = 1
         elif self.p2_score > self.p1_score:
-            return 2
+            self.winner = 2
+
+        return self.winner
 
     def process_moves(self, p1, p2):
-        if p1 == "steal" and p2 == "steal":
+        self.p1_previous_moves.append(p1)
+        self.p2_previous_moves.append(p2)
+
+        # True if steal, False if split
+        if p1 and True:
             self.p1_score += self.both_steal_points
             self.p2_score += self.both_steal_points
-        elif p1 == "split" and p2 == "split":
+        elif not p1 and not p2:
             self.p1_score += self.both_split_points
             self.p2_score += self.both_split_points
-        elif p1 == "steal" and p2 == "split":
+        elif p1 and not p2:
             self.p1_score += self.one_steal_points
             self.p2_score += self.one_split_points
-        elif p1 == "split" and p2 == "steal":
+        elif not p1 and p2:
             self.p1_score += self.one_split_points
             self.p2_score += self.one_steal_points
 
         self.current_round += 1
+        return self.end()
 
-        if self.current_round >= self.total_rounds:
-            return self.winner()
 
+def simulate(player1, player2):
+    '''
+    :param player1: Function that takes a list of all previous moves, the first list being its own moves
+                    and the second being the opponent's moves, and returns a move
+    :param player2: Function that takes a list of all previous moves, the first list being its own moves
+                    and the second being the opponent's moves, and returns a move
+    :return: A finished Prisoner's Dilemma game object
+    '''
+
+    game = PrisonersDilemma()
+
+    p1_move = player1(game.p1_previous_moves, game.p2_previous_moves)
+    p2_move = player2(game.p2_previous_moves, game.p1_previous_moves)
+
+    while not game.process_moves(p1_move, p2_move):
+        p1_move = player1(game.p1_previous_moves, game.p2_previous_moves)
+        p2_move = player2(game.p2_previous_moves, game.p1_previous_moves)
+
+    return game
