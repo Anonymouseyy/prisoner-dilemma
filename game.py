@@ -1,7 +1,6 @@
 class PrisonersDilemma:
-    def __init__(self, rounds=200, both_split_points=3, both_steal_points=1, one_split_points=0, one_steal_points=-5):
+    def __init__(self, both_split_points=3, both_steal_points=1, one_split_points=0, one_steal_points=-5):
         self.current_round = 1
-        self.total_rounds = rounds
 
         self.p1_score = 0
         self.p2_score = 0
@@ -15,10 +14,8 @@ class PrisonersDilemma:
         self.one_split_points = one_split_points
         self.one_steal_points = one_steal_points
 
-    def end(self):
-        if self.current_round < self.total_rounds:
-            return 0
-        elif self.p1_score == self.p2_score:
+    def win(self):
+        if self.p1_score == self.p2_score:
             self.winner = -1
         elif self.p1_score > self.p2_score:
             self.winner = 1
@@ -46,25 +43,24 @@ class PrisonersDilemma:
             self.p2_score += self.one_steal_points
 
         self.current_round += 1
-        return self.end()
 
 
-def simulate(player1, player2):
-    '''
+def simulate(player1, player2, rounds=200):
+    """
     :param player1: Function that takes a list of all previous moves, the first list being its own moves
                     and the second being the opponent's moves, and returns a move
     :param player2: Function that takes a list of all previous moves, the first list being its own moves
                     and the second being the opponent's moves, and returns a move
+    :param rounds: Number of rounds to be played
     :return: A finished Prisoner's Dilemma game object
-    '''
+    """
 
     game = PrisonersDilemma()
 
-    p1_move = player1(game.p1_previous_moves, game.p2_previous_moves)
-    p2_move = player2(game.p2_previous_moves, game.p1_previous_moves)
-
-    while not game.process_moves(p1_move, p2_move):
+    for _ in range(rounds):
         p1_move = player1(game.p1_previous_moves, game.p2_previous_moves)
         p2_move = player2(game.p2_previous_moves, game.p1_previous_moves)
+        game.process_moves(p1_move, p2_move)
 
+    game.win()
     return game
