@@ -15,5 +15,5 @@ def tit_for_two_tats(self_moves, opp_moves):
     return opp_moves[-2] and opp_moves[-1]
 
 
-def random(self_moves, opp_moves):
+def random_moves(self_moves, opp_moves):
     return random.random() > 0.5

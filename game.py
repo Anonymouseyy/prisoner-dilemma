@@ -1,6 +1,10 @@
+import random
+
+
 class PrisonersDilemma:
-    def __init__(self, both_split_points=3, both_steal_points=1, one_split_points=0, one_steal_points=-5):
+    def __init__(self, both_split_points=3, both_steal_points=1, one_split_points=0, one_steal_points=5, noise=0):
         self.current_round = 1
+        self.noise = noise
 
         self.p1_score = 0
         self.p2_score = 0
@@ -25,11 +29,17 @@ class PrisonersDilemma:
         return self.winner
 
     def process_moves(self, p1, p2):
+        # Introduce random noise
+        if random.random() < self.noise:
+            p1 = not p1
+        if random.random() < self.noise:
+            p2 = not p2
+
         self.p1_previous_moves.append(p1)
         self.p2_previous_moves.append(p2)
 
         # True if steal, False if split
-        if p1 and True:
+        if p1 and p2:
             self.p1_score += self.both_steal_points
             self.p2_score += self.both_steal_points
         elif not p1 and not p2:
@@ -45,8 +55,9 @@ class PrisonersDilemma:
         self.current_round += 1
 
 
-def simulate(player1, player2, rounds=200):
+def simulate(game, player1, player2, rounds=200):
     """
+    :param game: A PrisonersDilemma game object
     :param player1: Function that takes a list of all previous moves, the first list being its own moves
                     and the second being the opponent's moves, and returns a move
     :param player2: Function that takes a list of all previous moves, the first list being its own moves
@@ -54,8 +65,6 @@ def simulate(player1, player2, rounds=200):
     :param rounds: Number of rounds to be played
     :return: A finished Prisoner's Dilemma game object
     """
-
-    game = PrisonersDilemma()
 
     for _ in range(rounds):
         p1_move = player1(game.p1_previous_moves, game.p2_previous_moves)
