@@ -1,4 +1,13 @@
+# https://plato.stanford.edu/entries/prisoner-dilemma/strategy-table.html
 import random
+
+
+def unconditional_cooperate(self_moves, opp_moves):
+    return False
+
+
+def unconditional_steal(self_moves, opp_moves):
+    return True
 
 
 def tit_for_tat(self_moves, opp_moves):
