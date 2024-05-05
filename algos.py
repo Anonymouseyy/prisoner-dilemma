@@ -33,3 +33,10 @@ def tit_for_two_tats(self_moves, opp_moves):
 
 def random_moves(self_moves, opp_moves):
     return random.random() > 0.5
+
+
+def trigger(self_moves, opp_moves):
+    if not opp_moves:
+        return False
+
+    return True in opp_moves
